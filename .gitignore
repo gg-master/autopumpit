@@ -1,0 +1,7 @@
+.pio/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/tasks.json
+*.vcd
+.codegraph/
+.debug-journal.md

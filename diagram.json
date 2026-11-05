@@ -1,0 +1,74 @@
+{
+  "version": 1,
+  "author": "Анатолий Коршунов",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-arduino-uno",
+      "id": "uno",
+      "top": -51,
+      "left": 11,
+      "rotate": 90,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led1",
+      "top": 56.8,
+      "left": 496.2,
+      "rotate": 90,
+      "attrs": { "color": "red", "flip": "1" }
+    },
+    {
+      "type": "wokwi-lcd1602",
+      "id": "lcd1",
+      "top": 361.6,
+      "left": 168.8,
+      "attrs": { "pins": "i2c" }
+    },
+    { "type": "wokwi-relay-module", "id": "relay1", "top": 29, "left": 336, "attrs": {} },
+    { "type": "wokwi-vcc", "id": "vcc1", "top": 43, "left": 484.04, "rotate": 90, "attrs": {} },
+    { "type": "wokwi-gnd", "id": "gnd1", "top": 96, "left": 479.4, "attrs": {} },
+    {
+      "type": "wokwi-ky-040",
+      "id": "encoder1",
+      "top": 263,
+      "left": 237.9,
+      "rotate": 270,
+      "attrs": {}
+    },
+    { "type": "wokwi-gnd", "id": "gnd2", "top": 374.9, "left": 86.7, "rotate": 90, "attrs": {} },
+    { "type": "wokwi-vcc", "id": "vcc2", "top": 388.8, "left": 53.76, "rotate": 270, "attrs": {} },
+    { "type": "wokwi-vcc", "id": "vcc3", "top": 177.4, "left": 397.64, "rotate": 90, "attrs": {} },
+    { "type": "wokwi-gnd", "id": "gnd3", "top": 192.9, "left": 392.5, "rotate": 270, "attrs": {} },
+    { "type": "wokwi-vcc", "id": "vcc4", "top": 33.6, "left": 293.76, "rotate": 270, "attrs": {} },
+    { "type": "wokwi-gnd", "id": "gnd4", "top": 38.9, "left": 288.3, "rotate": 90, "attrs": {} },
+    { "type": "wokwi-slide-switch", "id": "sw1", "top": 129.2, "left": 310.3, "attrs": {} },
+    { "type": "wokwi-ds1307", "id": "rtc1", "top": 360, "left": -170, "attrs": { "initTime": "now" } }
+  ],
+  "connections": [
+    [ "gnd2:GND", "lcd1:GND", "black", [ "v0" ] ],
+    [ "vcc2:VCC", "lcd1:VCC", "red", [ "v0" ] ],
+    [ "lcd1:SDA", "uno:A4", "orange", [ "h-134.4", "v-253.6" ] ],
+    [ "lcd1:SCL", "uno:A5", "green", [ "h-144", "v-253.6" ] ],
+    [ "encoder1:CLK", "uno:3", "orange", [ "v0" ] ],
+    [ "encoder1:DT", "uno:2", "gold", [ "v0" ] ],
+    [ "encoder1:SW", "uno:0", "green", [ "v0" ] ],
+    [ "encoder1:VCC", "vcc3:VCC", "red", [ "v0" ] ],
+    [ "encoder1:GND", "gnd3:GND", "black", [ "v-26.7", "h28.3" ] ],
+    [ "vcc4:VCC", "relay1:VCC", "red", [ "v0" ] ],
+    [ "gnd4:GND", "relay1:GND", "black", [ "v0" ] ],
+    [ "relay1:IN", "uno:4", "green", [ "h-28.8", "v63.1" ] ],
+    [ "relay1:COM", "vcc1:VCC", "red", [ "h0" ] ],
+    [ "sw1:2", "uno:0", "green", [ "h0.1", "v5.3" ] ],
+    [ "vcc3:VCC", "sw1:1", "red", [ "h-76.8", "v-28.8" ] ],
+    [ "gnd3:GND", "sw1:3", "black", [ "h-48", "v-48" ] ],
+    [ "relay1:NO", "led1:A", "green", [ "v-1.8", "h49.2" ] ],
+    [ "led1:C", "gnd1:GND", "black", [ "h0" ] ],
+    [ "rtc1:5V", "vcc2:VCC", "red", [ "h-19.2", "v-38.4" ] ],
+    [ "rtc1:GND", "gnd2:GND", "black", [ "h-28.8", "v-48" ] ],
+    [ "rtc1:SDA", "uno:A4", "orange", [ "h-48", "v-259.2" ] ],
+    [ "rtc1:SCL", "uno:A5", "green", [ "h-57.6", "v-268.8" ] ]
+  ],
+  "dependencies": {}
+}
