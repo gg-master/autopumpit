@@ -5,3 +5,11 @@
 *.vcd
 .codegraph/
 .debug-journal.md
+
+# Local development tools and agent evidence
+.omo/
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.basedpyright/

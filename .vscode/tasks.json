@@ -4,10 +4,49 @@
     {
       "label": "Build firmware",
       "type": "process",
-      "command": "python",
-      "args": ["-m", "platformio", "run"],
-      "group": { "kind": "build", "isDefault": true },
-      "problemMatcher": ["$gcc"]
+      "command": "uv",
+      "args": [
+        "run",
+        "python",
+        "-m",
+        "platformio",
+        "run"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": [
+        "$gcc"
+      ]
+    },
+    {
+      "label": "Run tests",
+      "type": "process",
+      "command": "uv",
+      "args": [
+        "run",
+        "python",
+        "-m",
+        "pytest"
+      ],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Check project",
+      "type": "process",
+      "command": "uv",
+      "args": [
+        "run",
+        "python",
+        "-m",
+        "tools.check"
+      ],
+      "problemMatcher": []
     }
   ]
 }

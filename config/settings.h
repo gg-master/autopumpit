@@ -8,7 +8,6 @@
 #define PUPM_AMOUNT 14       // количество помп, подключенных через реле/мосфет
 #define START_PIN 4         // подключены начиная с пина
 #define SWITCH_LEVEL 1      // Wokwi: реле npn активно по HIGH; для реле с активным LOW поставить 0
-#define PARALLEL 1          // 1 - параллельный полив, 0 - полив в порядке очереди
 #define TIMER_START 1       // 1 - отсчёт периода с момента ВЫКЛЮЧЕНИЯ помпы, 0 - с момента ВКЛЮЧЕНИЯ помпы
 
 #define CLK 3
@@ -19,4 +18,14 @@
 // Default profile: DS1307 in Wokwi. uno-ds3231 selects the physical DS3231.
 #ifndef USE_DS3231
 #define USE_DS3231 0
+#endif
+
+// 0 = English, 1 = Русский. Build flags may override this value.
+#ifndef UI_LANGUAGE
+#define UI_LANGUAGE 1
+#endif
+
+// Return each idle manual pump to Auto after this many seconds.
+#ifndef MANUAL_IDLE_TIMEOUT_SEC
+#define MANUAL_IDLE_TIMEOUT_SEC 300UL
 #endif

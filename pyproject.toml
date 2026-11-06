@@ -1,0 +1,48 @@
+[project]
+name = "autopumpit-dev"
+version = "0.1.0"
+description = "Portable development tools and integration tests for AutoPumpIt firmware"
+requires-python = ">=3.13,<3.14"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "platformio==6.2.0",
+    "pytest>=8.3,<10",
+    "ruff>=0.14,<1",
+    "basedpyright>=1.31,<2",
+    "ziglang==0.13.0",
+]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = ["-ra", "--strict-config", "--strict-markers"]
+filterwarnings = ["error"]
+
+[tool.basedpyright]
+typeCheckingMode = "all"
+pythonVersion = "3.13"
+pythonPlatform = "All"
+include = ["tools", "tests"]
+reportUnusedCallResult = "warning"
+
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+include = ["pyproject.toml", "tools/**/*.py", "tests/**/*.py"]
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = ["COM812", "D203", "D213", "CPY001"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101", "PLR2004", "D", "SLF001"]
+"tools/**/*.py" = ["T201"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
