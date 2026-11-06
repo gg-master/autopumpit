@@ -1,10 +1,11 @@
-"""Build the real firmware core with a portable, pinned native compiler."""
+"""Build the real firmware core with the host test compiler."""
 
 import subprocess
-import sys
 from pathlib import Path
 
 import pytest
+
+from tests.support.native import COMPILER
 
 
 def build_core(tmp_path_factory: pytest.TempPathFactory, *, active_low: bool = False) -> Path:
@@ -18,10 +19,7 @@ def build_core(tmp_path_factory: pytest.TempPathFactory, *, active_low: bool = F
     _ = (build / "settings.h").write_text(settings, encoding="utf-8")
     _ = subprocess.run(  # noqa: S603 - Executable and sources are repository-controlled.
         [
-            sys.executable,
-            "-m",
-            "ziglang",
-            "c++",
+            *COMPILER,
             "-std=c++17",
             "-I",
             str(root / "src"),
