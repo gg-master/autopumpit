@@ -121,6 +121,6 @@ def test_manual_mode_expiration_does_not_close_global_menu(
     navigation_runners: tuple[UiRunner, UiRunner], language: int
 ) -> None:
     runner = navigation_runners[language]
-    frame = runner.run(*enter_manual(), "event 4", "event 1", "event 4", "advance 300000", "row")[0]
+    frame = runner.run(*enter_manual(), "event 4", "event 1", "event 4", "advance 90000", "row")[0]
     assert frame.top.strip() == runner.catalog.text("MENU")
     assert frame.bottom.strip() == ">" + runner.catalog.text("PUMPS")

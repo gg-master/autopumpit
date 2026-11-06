@@ -50,7 +50,7 @@ def test_idle_timeout_keeps_unstarted_duration_and_original_due(core_binary: Pat
         f"set 0 60 2 {NOW + 400}",
         "mode 0 1",
         "duration_set 0 17",
-        "advance 299999 299",
+        "advance 89999 89",
         "pump_state 0",
         "advance 1 1",
         "pump_state 0",
@@ -69,12 +69,12 @@ def test_each_idle_timer_is_independent_of_other_pump_actions(core_binary: Path)
         "boot 1",
         "mode 0 1",
         "mode 1 1",
-        "advance 200000 200",
+        "advance 60000 60",
         "touch 1",
-        "advance 100000 100",
+        "advance 30000 30",
         "pump_state 0",
         "pump_state 1",
-        "advance 200000 200",
+        "advance 60000 60",
         "pump_state 1",
     )
     assert rows == [[0, 0, 0], [1, 0, 0], [0, 0, 0]]
@@ -96,7 +96,7 @@ def test_active_and_queued_requests_never_expire_for_inactivity(core_binary: Pat
         "duration 0",
         "advance 7000 7",
         "duration 1",
-        "advance 293000 293",
+        "advance 83000 83",
         "pump_state 0",
         "pump_state 1",
         "advance 7000 7",
@@ -117,7 +117,7 @@ def test_stopped_pump_gets_full_idle_period_and_retains_remainder(core_binary: P
         "single 0 600",
         "advance 400000 400",
         "cancel 0",
-        "advance 299999 299",
+        "advance 89999 89",
         "pump_state 0",
         "advance 1 1",
         "pump_state 0",
@@ -132,7 +132,7 @@ def test_idle_clock_handles_millis_wrap(core_binary: Path) -> None:
         "boot 1",
         f"time 4294960000 {NOW}",
         "mode 0 1",
-        "advance 299999 299",
+        "advance 89999 89",
         "pump_state 0",
         "advance 1 1",
         "pump_state 0",
@@ -146,13 +146,13 @@ def test_overdue_auto_runs_once_after_manual_inactivity(core_binary: Path) -> No
         "boot 1",
         f"set 0 60 2 {NOW + 10}",
         "mode 0 1",
-        "advance 300000 300",
+        "advance 90000 90",
         "status",
         "advance 2000 2",
         "status",
     )
     assert [row[0] for row in rows[1:]] == [1, 0]
-    assert rows[-1][6] == NOW + 362
+    assert rows[-1][6] == NOW + 152
 
 
 def test_cancelled_queue_retains_full_requested_time(core_binary: Path) -> None:

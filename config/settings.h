@@ -27,7 +27,7 @@
 
 // Return each idle manual pump to Auto after this many seconds.
 #ifndef MANUAL_IDLE_TIMEOUT_SEC
-#define MANUAL_IDLE_TIMEOUT_SEC 300UL
+#define MANUAL_IDLE_TIMEOUT_SEC 90UL
 #endif
 
 // Return to the active-pump home screen after inactivity; 0 disables the timeout.

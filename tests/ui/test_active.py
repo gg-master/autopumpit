@@ -119,7 +119,7 @@ def test_manual_queue_advances_while_overview_stays_open_after_idle_timeout(
         "row",
         "advance 5000",
         "row",
-        "advance 300000",
+        "advance 90000",
         "row",
     )
     assert [frame.mask for frame in frames] == [1, 2, 0, 0]
