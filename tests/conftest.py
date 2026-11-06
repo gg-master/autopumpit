@@ -38,7 +38,6 @@ def build_core(tmp_path_factory: pytest.TempPathFactory, *, active_low: bool = F
             str(executable),
         ],
         check=True,
-        capture_output=True,
         text=True,
         timeout=180,
     )

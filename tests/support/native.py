@@ -30,7 +30,6 @@ def compile_native(build: Path, sources: tuple[str, ...], flags: tuple[str, ...]
             str(executable),
         ],
         check=True,
-        capture_output=True,
         text=True,
         timeout=180,
     )
