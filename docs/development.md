@@ -19,7 +19,9 @@ uv run python -m tools.check
 uv подготовит Python 3.13 и зависимости из [uv.lock](../uv.lock).
 Активировать виртуальное окружение вручную не требуется. PlatformIO
 загружает инструменты AVR и Arduino framework. Для нативных тестов используется
-Zig из Python-пакета: отдельно устанавливать Visual Studio, MinGW, CMake
+Zig из Python-пакета на Windows и Linux. На macOS используется Apple Clang из
+Xcode Command Line Tools (`xcode-select --install`), чтобы компилятор работал
+с установленным SDK. Отдельно устанавливать Visual Studio, MinGW, CMake
 или Node.js не нужно. Версии и настройки инструментов — в
 [pyproject.toml](../pyproject.toml) и [platformio.ini](../platformio.ini).
 
