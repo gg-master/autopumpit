@@ -121,7 +121,11 @@ void changeField(int8_t step) {
   draftDirty = true;
 }
 }
-void autoUiBegin(LCD_1602_RUS& display) { lcd = &display; autoUiReset(); }
+void autoUiBegin(LCD_1602_RUS& display) {
+  lcd = &display;
+  current = fields;
+  loadDraft();
+}
 void autoUiReset() {
   current = fields;
   loadDraft();
@@ -172,3 +176,7 @@ void autoUiInput(ManualUiInput input) {
   }
   drawAuto();
 }
+
+uint8_t autoUiSelectedPump() { return current_pump; }
+
+void autoUiBack() { manualUiShowMenu(current_pump); }

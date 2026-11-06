@@ -14,7 +14,7 @@ def test_stopped_time_returns_after_automatic_idle_exit(
 ) -> None:
     runner = idle_runners[language]
     commands = enter_manual() + ["event 1"] * 4 + ["event 4", "advance 2000", "event 4", "row"]
-    commands += ["advance 300000", "row", *enter_manual(), "row"]
+    commands += ["advance 90000", "row", *enter_manual(), "row"]
     frames = runner.run(*commands)
     assert "00:00:03" in frames[0].bottom
     assert frames[1].bottom.strip() == runner.catalog.text("DISABLED")
@@ -27,7 +27,7 @@ def test_finished_time_and_unselected_pump_idle_exit(
 ) -> None:
     runner = idle_runners[language]
     commands = enter_manual() + ["event 1"] * 4 + ["event 4", "advance 5000", "row"]
-    commands += ["event 0"] * 4 + ["event 3", "advance 300000", "event 2", "row"]
+    commands += ["event 0"] * 4 + ["event 3", "advance 90000", "event 2", "row"]
     commands += [*enter_manual(), "row"]
     frames = runner.run(*commands)
     assert "00:00:05" in frames[0].bottom
@@ -44,12 +44,12 @@ def test_editing_keeps_selected_manual_pump_alive(
         *(
             [
                 *enter_manual(),
-                "advance 200000",
+                "advance 60000",
                 "event 1",
                 "event 3",
-                "advance 200000",
+                "advance 60000",
                 "row",
-                "advance 100000",
+                "advance 30000",
                 "row",
             ]
         )
@@ -75,7 +75,7 @@ def test_auto_switch_snapshots_live_timer_then_full_completion_restores_initial(
         "row",
     ]
     commands += [*enter_manual(), "row"]
-    commands += ["event 1"] * 4 + ["event 4", "advance 13000", "row", "advance 300000", "row"]
+    commands += ["event 1"] * 4 + ["event 4", "advance 13000", "row", "advance 90000", "row"]
     commands += [*enter_manual(), "row"]
     frames = runner.run(*commands)
     assert frames[0].mask == 0

@@ -19,4 +19,4 @@ void uiTextRow(LCD_1602_RUS& lcd, uint8_t row, PGM_P text, char marker = 0);
 void uiFormatRow(LCD_1602_RUS& lcd, uint8_t row, PGM_P format, ...);
 void uiActions(LCD_1602_RUS& lcd, uint8_t row, PGM_P first, PGM_P second,
                uint8_t selected, uint8_t offset = 0);
-void uiPumpRow(LCD_1602_RUS& lcd, uint8_t row, uint8_t pump, char marker = 0);
+void uiPumpRow(LCD_1602_RUS& lcd, uint8_t row, uint8_t pump, char marker = 0, PGM_P prefix = nullptr);

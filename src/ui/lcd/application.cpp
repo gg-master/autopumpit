@@ -5,12 +5,24 @@
 #include <core/application.h>
 #include <core/rtc_schedule.h>
 #include <LCD_1602_RUS.h>
+#include <platform/ports.h>
 namespace {
 LCD_1602_RUS* lcd;
 uint8_t clockField;
 CalendarValue clockDraft;
 bool pendingInput;
 ManualUiInput nextInput;
+uint32_t lastInteraction;
+bool returnedHome;
+void returnHomeIfIdle() {
+  const auto state = applicationState();
+  if (!UI_HOME_TIMEOUT_SEC || returnedHome ||
+      (state != ApplicationState::Running && state != ApplicationState::ClockEditing) ||
+      uint32_t(hardware::milliseconds() - lastInteraction) < UI_HOME_TIMEOUT_SEC * 1000UL) return;
+  returnedHome = true;
+  if (state == ApplicationState::ClockEditing && !applicationCancelClock()) return;
+  manualUiShowActive(autoUiSelectedPump());
+}
 void drawClock() {
   calendarDraw(*lcd, clockDraft, clockField, true,
                applicationState() == ApplicationState::ClockEditing);
@@ -26,17 +38,32 @@ void clockInput(ManualUiInput input) {
   else if (input == ManualUiInput::Click) {
     if (clockField < 5) ++clockField;
     else {
+      const bool required = applicationState() == ApplicationState::ClockRequired;
       const bool resumed = clockField == 6 ? applicationCancelClock() :
           applicationSaveClock(calendarTimestamp(clockDraft));
-      if (resumed) autoUiBegin(*lcd);
+      if (resumed) {
+        if (required) {
+          autoUiBegin(*lcd);
+          manualUiShowActive(autoUiSelectedPump());
+        } else manualUiShowMenu(autoUiSelectedPump(), 1);
+      }
       return;
     }
   }
   drawClock();
 }
 void handleInput() {
-  if (!pendingInput) return;
+  if (!pendingInput) { returnHomeIfIdle(); return; }
   const auto state = applicationState();
+  if (nextInput == ManualUiInput::DoubleClick) {
+    if (state == ApplicationState::ClockEditing) {
+      if (applicationCancelClock()) manualUiShowMenu(autoUiSelectedPump(), 1);
+    } else if (state == ApplicationState::Running) {
+      if (!manualUiIsOpen()) autoUiBack();
+      else if (manualUiBack() == ManualUiAction::ShowPump) autoUiReset();
+    }
+    return;
+  }
   if (state == ApplicationState::ClockRequired || state == ApplicationState::ClockEditing) {
     clockInput(nextInput);
     return;
@@ -44,6 +71,7 @@ void handleInput() {
   if (!manualUiIsOpen()) { autoUiInput(nextInput); return; }
   switch (manualUiHandle(nextInput)) {
     case ManualUiAction::None: break;
+    case ManualUiAction::ShowPump:
     case ManualUiAction::ReturnToAuto: autoUiReset(); break;
     case ManualUiAction::PreviousPump: autoUiMove(-1); break;
     case ManualUiAction::NextPump: autoUiMove(1); break;
@@ -64,9 +92,14 @@ void drawFault() {
 void lcdApplicationBegin(LCD_1602_RUS& display, bool resetRequested, uint32_t startupTimestamp) {
   lcd = &display;
   pendingInput = false;
+  lastInteraction = hardware::milliseconds();
+  returnedHome = false;
   manualUiBegin(display);
   switch (applicationBegin(resetRequested)) {
-    case ApplicationState::Running: autoUiBegin(display); break;
+    case ApplicationState::Running:
+      autoUiBegin(display);
+      manualUiShowActive(autoUiSelectedPump());
+      break;
     case ApplicationState::ClockRequired:
       clockDraft = calendarFrom(startupTimestamp);
       clockField = 0;
@@ -81,7 +114,11 @@ void lcdApplicationRefresh() {
   if (manualUiRefresh() == ManualUiAction::ReturnToAuto) autoUiReset();
   autoUiRefresh();
 }
-void lcdApplicationTick(bool hasInput, ManualUiInput input) {
+void lcdApplicationTick(bool hasInput, ManualUiInput input, bool interacting) {
+  if (hasInput || interacting) {
+    lastInteraction = hardware::milliseconds();
+    returnedHome = false;
+  }
   pendingInput = hasInput;
   nextInput = input;
   const auto before = applicationState();

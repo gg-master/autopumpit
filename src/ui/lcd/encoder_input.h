@@ -3,6 +3,11 @@
 class Encoder;
 class EncoderInput {
   bool holdCandidate = false;
+  bool clickPending = false;
+  uint32_t clickedAt = 0;
+  bool turnPending = false;
+  ManualUiInput pendingTurn = ManualUiInput::TurnLeft;
  public:
   bool read(Encoder& encoder, ManualUiInput& input);
+  bool waitingForClick() const { return clickPending; }
 };

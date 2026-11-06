@@ -7,3 +7,7 @@ void autoUiRefresh();
 void autoUiInput(ManualUiInput input);
 
 void autoUiMove(int8_t step);
+
+uint8_t autoUiSelectedPump();
+
+void autoUiBack();

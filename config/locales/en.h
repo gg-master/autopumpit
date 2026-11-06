@@ -35,3 +35,12 @@
 #define TXT_RUN_TIME "Run  %c%02u%c%02u%c%02u"
 #define TXT_START_TIME "%c%02u%c%02u Start"
 #define TXT_MANUAL_TIME "%c%02u%c%02u%c%02u"
+
+#define TXT_ACTIVE "Active pumps"
+#define TXT_ACTIVE_COUNT "Active:%02u %u/%u"
+
+#define TXT_MENU "Menu"
+#define TXT_PUMPS "Pumps"
+
+#define TXT_ACTIVE_AUTO "A:"
+#define TXT_ACTIVE_MANUAL "M:"

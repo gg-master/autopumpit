@@ -54,34 +54,68 @@ void manualUiShowPump(uint8_t pump) {
   manualState.dirty = true;
   manualUiRender();
 }
+void manualUiShowActive(uint8_t pump) {
+  manualState.pump = pump;
+  manualState.open = true;
+  manualState.screen = Screen::Active;
+  manualState.cursor = 0;
+  manualState.errorText = nullptr;
+  manualState.dirty = true;
+  manualUiRender();
+}
+void manualUiShowMenu(uint8_t pump, uint8_t selected) {
+  manualState.pump = pump;
+  manualState.open = true;
+  manualState.screen = Screen::Menu;
+  manualState.cursor = selected;
+  manualState.errorText = nullptr;
+  manualState.dirty = true;
+  manualUiRender();
+}
 void manualUiClose() { manualState.open = false; }
 ManualUiAction manualUiHandle(ManualUiInput input) {
   if (!manualState.open) return ManualUiAction::None;
   const int8_t direction = input == ManualUiInput::TurnRight ? 1 : input == ManualUiInput::TurnLeft ? -1 : 0;
   const int8_t held = input == ManualUiInput::HeldTurnRight ? 1 : input == ManualUiInput::HeldTurnLeft ? -1 : 0;
   manualState.errorText = nullptr;
-  if (pumpControlManualMode(manualState.pump) &&
+  if ((manualState.screen == Screen::Pump || manualState.screen == Screen::Selector) &&
+      pumpControlManualMode(manualState.pump) &&
       !(manualState.screen == Screen::Pump && held && manualState.cursor == 0))
     pumpControlTouchManual(manualState.pump);
-  if (manualState.screen == Screen::Selector) {
+  if (manualState.screen == Screen::Menu) {
     if (direction) {
       const int8_t next = manualState.cursor + direction;
       manualState.cursor = next < 0 ? 0 : next > 3 ? 3 : next;
     } else if (input == ManualUiInput::Click) {
-      if (manualState.cursor == 2) { manualUiClose(); return ManualUiAction::SetClock; }
-      if (manualState.cursor == 3) {
+      if (manualState.cursor == 0) { manualUiClose(); return ManualUiAction::ShowPump; }
+      if (manualState.cursor == 1) { manualUiClose(); return ManualUiAction::SetClock; }
+      if (manualState.cursor == 2) {
         manualState.screen = Screen::Concurrency;
         manualState.concurrencyDraft = pumpControlConcurrencyLimit();
         manualState.cursor = 0;
-        manualState.dirty = true;
-        manualUiRender();
+      } else {
+        manualUiShowActive(manualState.pump);
         return ManualUiAction::None;
       }
+    }
+  } else if (manualState.screen == Screen::Selector) {
+    if (direction) {
+      const int8_t next = manualState.cursor + direction;
+      manualState.cursor = next < 0 ? 0 : next > 2 ? 2 : next;
+    } else if (input == ManualUiInput::Click) {
+      if (manualState.cursor == 2) { manualUiShowMenu(manualState.pump); return ManualUiAction::None; }
       const bool manual = manualState.cursor == 1;
       pumpControlSetManualMode(manualState.pump, manual);
       if (!manual) { manualUiClose(); return ManualUiAction::ReturnToAuto; }
       manualUiShowPump(manualState.pump);
       return ManualUiAction::None;
+    }
+  } else if (manualState.screen == Screen::Active) {
+    if (direction) {
+      const int8_t next = manualState.cursor + direction;
+      manualState.cursor = next < 0 ? 0 : next;
+    } else if (input == ManualUiInput::Click) {
+      manualUiShowMenu(manualState.pump);
     }
   } else if (manualState.screen == Screen::Concurrency) {
     if (direction) {
@@ -94,8 +128,7 @@ ManualUiAction manualUiHandle(ManualUiInput input) {
       if (manualState.cursor == 0) manualState.cursor = 1;
       else {
         if (manualState.cursor == 1) pumpControlSetConcurrencyLimit(manualState.concurrencyDraft);
-        manualUiOpen(manualState.pump);
-        manualState.cursor = 3;
+        manualUiShowMenu(manualState.pump, 2);
       }
     }
   } else {
@@ -123,7 +156,7 @@ ManualUiAction manualUiHandle(ManualUiInput input) {
   return ManualUiAction::None;
 }
 ManualUiAction manualUiRefresh() {
-  if (manualState.open && manualState.screen != Screen::Concurrency &&
+  if (manualState.open && (manualState.screen == Screen::Pump || manualState.screen == Screen::Selector) &&
       (manualState.screen == Screen::Pump || manualState.manualAtOpen) &&
       !pumpControlManualMode(manualState.pump)) {
     manualUiClose();
@@ -133,3 +166,16 @@ ManualUiAction manualUiRefresh() {
   return ManualUiAction::None;
 }
 bool manualUiIsOpen() { return manualState.open; }
+
+ManualUiAction manualUiBack() {
+  switch (manualState.screen) {
+    case Screen::Active: break;
+    case Screen::Menu: manualUiShowActive(manualState.pump); break;
+    case Screen::Selector:
+      manualUiClose();
+      return ManualUiAction::ShowPump;
+    case Screen::Pump: manualUiShowMenu(manualState.pump); break;
+    case Screen::Concurrency: manualUiShowMenu(manualState.pump, 2); break;
+  }
+  return ManualUiAction::None;
+}
