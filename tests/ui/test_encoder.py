@@ -121,3 +121,18 @@ def test_triple_click_produces_back_then_single(encoder_binary: Path) -> None:
         "1000 1 1 1",
     ]
     assert events(encoder_binary, samples) == [(500, 6), (1000, 4)]
+
+
+@pytest.mark.parametrize(
+    ("phases", "turn"),
+    [([(1, 0), (0, 0), (0, 1), (1, 1)], 1), ([(0, 1), (0, 0), (1, 0), (1, 1)], 0)],
+)
+def test_short_click_precedes_rotation_inside_double_click_window(
+    encoder_binary: Path, phases: list[tuple[int, int]], turn: int
+) -> None:
+    samples = ["100 1 1 1", "200 0 1 1", "300 1 1 1"]
+    samples += [f"{350 + index * 40} 1 {clk} {dt}" for index, (clk, dt) in enumerate(phases)]
+    samples += ["500 1 1 1", "900 1 1 1"]
+    recorded = events(encoder_binary, samples)
+    assert [event for _, event in recorded] == [4, turn]
+    assert recorded[0][0] < 600

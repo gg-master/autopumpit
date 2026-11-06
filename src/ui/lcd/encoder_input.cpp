@@ -4,15 +4,25 @@
 namespace { constexpr uint32_t doubleClickWindow = 300UL; }
 
 bool EncoderInput::read(Encoder& encoder, ManualUiInput& input) {
+  if (turnPending) {
+    turnPending = false;
+    input = pendingTurn;
+    return true;
+  }
   encoder.tick();
   const uint32_t now = millis();
   if (encoder.isTurn()) {
     holdCandidate = false;
-    clickPending = false;
     if (encoder.isRightH()) input = ManualUiInput::HeldTurnRight;
     else if (encoder.isLeftH()) input = ManualUiInput::HeldTurnLeft;
     else if (encoder.isRight()) input = ManualUiInput::TurnRight;
     else input = ManualUiInput::TurnLeft;
+    if (clickPending) {
+      clickPending = false;
+      pendingTurn = input;
+      turnPending = true;
+      input = ManualUiInput::Click;
+    }
     return true;
   }
   if (encoder.isHolded()) { holdCandidate = true; clickPending = false; }
