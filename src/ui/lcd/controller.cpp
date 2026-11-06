@@ -31,6 +31,8 @@ void lcdControllerBegin() {
 void lcdControllerTick() {
   ManualUiInput input = ManualUiInput::Click;
   bool hasInput = encoderInput.read(encoder, input);
+  const bool interacting = encoder.isHold() || encoderInput.waitingForClick();
+  if (interacting) lastAction = millis();
   if (hasInput) {
     lastAction = millis();
     if (!backlight) {
@@ -40,7 +42,7 @@ void lcdControllerTick() {
     }
   }
   const auto before = applicationState();
-  lcdApplicationTick(hasInput, input);
+  lcdApplicationTick(hasInput, input, interacting);
   if (applicationState() == ApplicationState::Fault && before != ApplicationState::Fault) {
     backlight = true;
     lastAction = millis();

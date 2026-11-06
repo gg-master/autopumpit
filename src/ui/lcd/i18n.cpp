@@ -77,21 +77,22 @@ void uiActions(LCD_1602_RUS& lcd, uint8_t row, PGM_P first, PGM_P second,
   }
   pad(lcd, cells);
 }
-void uiPumpRow(LCD_1602_RUS& lcd, uint8_t row, uint8_t pump, char marker) {
-#if USE_CUSTOM_CHANNEL_NAMES
+void uiPumpRow(LCD_1602_RUS& lcd, uint8_t row, uint8_t pump, char marker, PGM_P prefix) {
   lcd.setCursor(0, row);
   uint8_t cells = marker ? 1 : 0;
   if (marker) lcd.print(marker);
+  if (prefix) cells += printFlash(lcd, prefix, 16 - cells);
+#if USE_CUSTOM_CHANNEL_NAMES
   const wchar_t* name = relayNames[pump];
   while (*name && cells < 16) {
     const wchar_t token[2] = {*name++, 0};
     lcd.print(token);
     ++cells;
   }
-  pad(lcd, cells);
 #else
   char buffer[33];
   snprintf_P(buffer, sizeof(buffer), TR(PUMP_NAME), pump + 1);
-  uiRow(lcd, row, buffer, marker);
+  cells += printCells(lcd, buffer, 16 - cells);
 #endif
+  pad(lcd, cells);
 }

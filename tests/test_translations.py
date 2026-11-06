@@ -23,7 +23,7 @@ def catalogs(tmp_path: Path) -> Path:
 def test_accepts_repository_catalogs(catalogs: Path) -> None:
     # Given complete repository catalogs, when checked, then both pass.
     results = check_translations(catalogs, ROOT / "lib/LCD_1602_RUS/src/LCD_1602_RUS.cpp")
-    assert [(result.language, result.keys) for result in results] == [("en", 35), ("ru", 35)]
+    assert [(result.language, result.keys) for result in results] == [("en", 41), ("ru", 41)]
 
 
 @pytest.mark.parametrize(
@@ -34,7 +34,7 @@ def test_accepts_repository_catalogs(catalogs: Path) -> None:
         ('"РЕЖИМ"', '"ABCDEFGHIJKLMNOPQ"', "row"),
         ('"ДАЛЕЕ"', '"ABCDEFGHIJKL"', "actions"),
         ('"РЕЖИМ"', '"🙂"', "characters"),
-        ('"РЕЖИМ"', '"БГДЖЗИЙЛ"', "cgram"),
+        ('"АКТИВНЫЕ ПОМПЫ"', '"БГДЖЗИЙЛ"', "cgram"),
         ('"ПОМПА %u"', '"ABCDEFGHIJKLMN%u"', "row"),
         (
             '#define TXT_CLOCK_SAVE "' + chr(1054) + chr(1050) + '"',

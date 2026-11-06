@@ -29,3 +29,8 @@
 #ifndef MANUAL_IDLE_TIMEOUT_SEC
 #define MANUAL_IDLE_TIMEOUT_SEC 300UL
 #endif
+
+// Return to the active-pump home screen after inactivity; 0 disables the timeout.
+#ifndef UI_HOME_TIMEOUT_SEC
+#define UI_HOME_TIMEOUT_SEC 30UL
+#endif

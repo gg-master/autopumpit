@@ -18,6 +18,12 @@ from typing import Final, override
 ROOT: Final = Path(__file__).resolve().parents[1]
 EXPECTED_KEYS: Final = frozenset(
     [
+        "ACTIVE",
+        "ACTIVE_COUNT",
+        "ACTIVE_AUTO",
+        "ACTIVE_MANUAL",
+        "MENU",
+        "PUMPS",
         "MODE",
         "AUTO",
         "MANUAL",
@@ -63,8 +69,11 @@ PAIRS: Final = (
     ("CLOCK_SAVE", "BACK"),
 )
 FRAMES: Final = (
-    *(("MODE", key) for key in ("AUTO", "MANUAL", "CLOCK", "CONCURRENCY")),
+    *(("PUMP_NAME", key) for key in ("AUTO", "MANUAL", "BACK")),
+    *(("MENU", key) for key in ("PUMPS", "CLOCK", "CONCURRENCY", "ACTIVE")),
     ("CONCURRENCY_VALUE", "SAVE", "CANCEL"),
+    ("ACTIVE_COUNT", "ACTIVE_AUTO", "PUMP_NAME"),
+    ("ACTIVE_COUNT", "ACTIVE_MANUAL", "PUMP_NAME"),
     *(
         (key, state)
         for key in ("PUMP_NAME", "NEXT", "BACK")

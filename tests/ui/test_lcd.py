@@ -39,7 +39,9 @@ class UiRunner:
     binary: Path
     catalog: Catalog
 
-    def run(self, *commands: str) -> list[Frame]:
+    def run(self, *commands: str, from_home: bool = False) -> list[Frame]:
+        if not from_home:
+            commands = ("event 4", "event 4", *commands)
         result = subprocess.run(  # noqa: S603 - Runs the compiled project UI test runner.
             [str(self.binary)],
             input="\n".join(commands),
@@ -56,8 +58,13 @@ class UiRunner:
         return frames
 
 
-def build_ui(factory: pytest.TempPathFactory, language: int) -> UiRunner:
-    binary = compile_native(factory.mktemp("lcd"), SOURCES, (f"-DUI_LANGUAGE={language}",))
+def build_ui(
+    factory: pytest.TempPathFactory, language: int, *, home_timeout: int | None = 0
+) -> UiRunner:
+    flags = (f"-DUI_LANGUAGE={language}",)
+    if home_timeout is not None:
+        flags += (f"-DUI_HOME_TIMEOUT_SEC={home_timeout}",)
+    binary = compile_native(factory.mktemp("lcd"), SOURCES, flags)
     name = ("en", "ru")[language]
     return UiRunner(binary, read_catalog(ROOT / f"config/locales/{name}.h"))
 
@@ -65,6 +72,10 @@ def build_ui(factory: pytest.TempPathFactory, language: int) -> UiRunner:
 @pytest.fixture(scope="module")
 def ui_runners(tmp_path_factory: pytest.TempPathFactory) -> tuple[UiRunner, UiRunner]:
     return build_ui(tmp_path_factory, 0), build_ui(tmp_path_factory, 1)
+
+
+def open_menu() -> list[str]:
+    return ["event 4", "event 1", "event 1", "event 4"]
 
 
 def enter_manual() -> list[str]:
@@ -208,3 +219,8 @@ def test_hold_on_active_manual_resets_time_and_starts_next_request(
     assert "00:00:05" in frames[0].bottom
     assert runner.catalog.text("START") in frames[0].bottom
     assert runner.catalog.text("STOP") in frames[1].bottom
+
+
+def active_text(runner: UiRunner, pump: int, *, manual: bool = False) -> str:
+    prefix = runner.catalog.text("ACTIVE_MANUAL" if manual else "ACTIVE_AUTO")
+    return (prefix + runner.catalog.text("PUMP_NAME") % pump)[:16]

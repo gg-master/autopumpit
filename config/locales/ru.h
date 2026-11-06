@@ -36,3 +36,12 @@
 #define TXT_RUN_TIME "РАБОТА%c%02u%c%02u%c%02u"
 #define TXT_START_TIME "%c%02u%c%02u ПУСК"
 #define TXT_MANUAL_TIME "%c%02u%c%02u%c%02u"
+
+#define TXT_ACTIVE "АКТИВНЫЕ ПОМПЫ"
+#define TXT_ACTIVE_COUNT "ПОЛИВ:%02u %u/%u"
+
+#define TXT_MENU "МЕНЮ"
+#define TXT_PUMPS "ПОМПЫ"
+
+#define TXT_ACTIVE_AUTO "А:"
+#define TXT_ACTIVE_MANUAL "Р:"
